@@ -4,7 +4,10 @@
 */
 
 function isPalindrome(str) {
-  return true;
+  const regex = /[\s~`!@#$%^&*(){}\[\];:"'<,.>?\/\\|_+=-]/g;
+  return str.replace(regex, '').toLowerCase() == str.replace(regex, '').toLowerCase().split('').reverse().join('');
 }
+
+//console.log(isPalindrome("malayalam"));
 
 module.exports = isPalindrome;
