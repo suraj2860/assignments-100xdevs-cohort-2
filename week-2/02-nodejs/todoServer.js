@@ -41,9 +41,95 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
+  const { parse } = require('uuid');
+  const fs = require('node:fs');
   
   const app = express();
   
   app.use(bodyParser.json());
+  
+  let todos;
+
+  try {
+    let data = fs.readFileSync('F:/assignments-100xdevs-cohort-2/week-2/02-nodejs/todos.json', 'utf8');
+    todos = JSON.parse(data);
+    console.log( todos);
+  } catch (err) {
+    console.error(err);
+  }
+
+  app.get('/todos', (req, res) => {
+    return res.status(200).json(todos);
+  });
+
+  app.get('/todos/:id', (req, res) => {
+    const id = req.params.id;
+
+    const todo = todos.find(todo => todo.id == parseInt(id));
+    if(!todo) return res.status(404).send();
+
+    return res.status(200).json(todo);
+  });
+
+  app.post('/todos', (req, res) => {
+    const { title, completed, description } = req.body;
+
+    const id = todos.push({
+      id: todos.length + 1,
+      title,
+      completed,
+      description
+    });
+
+    try {
+      fs.writeFileSync('F:/assignments-100xdevs-cohort-2/week-2/02-nodejs/todos.json', JSON.stringify(todos));
+      // file written successfully
+    } catch (err) {
+      console.error(err);
+    }
+
+    return res.status(201).json({id: id});
+  });
+
+  app.put('/todos/:id', (req, res) => {
+    const id = req.params.id;
+    const { title, completed } = req.body;
+
+    const todoIndex = todos.findIndex(todo => todo.id == parseInt(id));
+    if(todoIndex == -1) return res.status(404).send();
+
+    todos[todoIndex].title = title;
+    todos[todoIndex].completed = completed;
+
+    try {
+      fs.writeFileSync('F:/assignments-100xdevs-cohort-2/week-2/02-nodejs/todos.json', JSON.stringify(todos));
+      // file written successfully
+    } catch (err) {
+      console.error(err);
+    }
+
+    return res.status(200).send();
+  });
+
+  app.delete('/todos/:id',  (req, res) => {
+    const id = req.params.id;
+    const todoIndex = todos.findIndex(todo => todo.id == parseInt(id));
+    if(todoIndex == -1) return res.status(404).send();
+    todos.splice(parseInt(todoIndex), 1);
+
+    try {
+      fs.writeFileSync('F:/assignments-100xdevs-cohort-2/week-2/02-nodejs/todos.json', JSON.stringify(todos));
+      // file written successfully
+    } catch (err) {
+      console.error(err);
+    }
+
+    return res.status(200).send();
+  })
+
+  app.use((req, res, next) => {
+    res.status(404).send();
+});
+
   
   module.exports = app;
