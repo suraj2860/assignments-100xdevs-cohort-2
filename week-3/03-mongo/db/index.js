@@ -12,11 +12,7 @@ const AdminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    },
-    uploadedCourses: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course'
-    }]
+    }
 });
 
 const UserSchema = new mongoose.Schema({
@@ -38,6 +34,10 @@ const CourseSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin'
     },
     description: {
         type: String,
