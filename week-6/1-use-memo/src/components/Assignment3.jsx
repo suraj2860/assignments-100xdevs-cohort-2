@@ -12,7 +12,11 @@ export const Assignment3 = () => {
     ]);
 
     // Your code starts here
-    const totalValue = 0;
+    
+    const totalValue = items.reduce((acc, curr) =>   {
+        return acc + curr.value;
+    }, 0);
+
     // Your code ends here
     return (
         <div>
